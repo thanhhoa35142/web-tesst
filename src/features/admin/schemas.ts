@@ -116,6 +116,49 @@ export const scoringConfigsSchema = z.object({
 });
 export type ScoringConfigsResponse = z.infer<typeof scoringConfigsSchema>;
 
+// --- API keys (MCP/agent credentials) ---
+
+export const apiKeyGrantSchema = z.object({
+  effect: z.string(),
+  resource: z.string(),
+  action: z.string(),
+  createdAt: z.string().optional(),
+});
+export type ApiKeyGrant = z.infer<typeof apiKeyGrantSchema>;
+
+export const apiKeySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  keyPrefix: z.string(),
+  rateLimitRps: z.number(),
+  expiresAt: z.string().nullable(),
+  lastUsedAt: z.string().nullable(),
+  revokedAt: z.string().nullable(),
+  createdAt: z.string(),
+  grants: z.array(apiKeyGrantSchema),
+});
+export type ApiKey = z.infer<typeof apiKeySchema>;
+export const apiKeysSchema = z.object({ items: z.array(apiKeySchema) });
+export type ApiKeysResponse = z.infer<typeof apiKeysSchema>;
+
+// Create response carries the raw secret — returned exactly once.
+export const createdApiKeySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  keyPrefix: z.string(),
+  rateLimitRps: z.number(),
+  expiresAt: z.string().nullable(),
+  lastUsedAt: z.string().nullable(),
+  revokedAt: z.string().nullable(),
+  createdAt: z.string(),
+  secret: z.string(),
+});
+export type CreatedApiKey = z.infer<typeof createdApiKeySchema>;
+
+export const grantAckSchema = z.object({ status: z.string() });
+
 // RFC 7807 problem+json extended with `code` and `requestId`.
 export const problemSchema = z.object({
   type: z.string().optional(),

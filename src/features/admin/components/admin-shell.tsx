@@ -7,6 +7,7 @@ import {
   CalendarClock,
   ChevronDown,
   Flag,
+  KeyRound,
   LayoutDashboard,
   ListChecks,
   LogOut,
@@ -34,6 +35,7 @@ const NAV = [
   { href: "/reports", label: "Reports", icon: Flag },
   { href: "/scoring", label: "Scoring", icon: SlidersHorizontal },
   { href: "/events", label: "Events", icon: CalendarClock },
+  { href: "/api-keys", label: "API Keys", icon: KeyRound },
 ];
 
 const COLLAPSED_KEY = "ph-sidebar-collapsed";
