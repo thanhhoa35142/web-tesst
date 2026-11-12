@@ -27,6 +27,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground">
+        {/* Apply persisted UI scale before first paint (avoids rem-scaling flash). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var s=localStorage.getItem('ph-ui-scale');if(s)document.documentElement.style.fontSize=s}catch(e){}",
+          }}
+        />
         <Providers>{children}</Providers>
         <Toaster />
       </body>
