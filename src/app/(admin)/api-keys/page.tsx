@@ -8,6 +8,7 @@ import { apiKeysSchema, type ApiKey } from "@/features/admin/schemas";
 import { PageHeader } from "@/features/admin/components/page-header";
 import { QueryState } from "@/features/admin/components/query-state";
 import { CreateKeyDialog } from "@/features/admin/components/api-keys/create-key-dialog";
+import { GrantManagerDialog } from "@/features/admin/components/api-keys/grant-manager-dialog";
 import { RevokeKeyDialog } from "@/features/admin/components/api-keys/revoke-key-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,7 @@ export default function ApiKeysPage() {
   );
   const [createOpen, setCreateOpen] = useState(false);
   const [revokeTarget, setRevokeTarget] = useState<ApiKey | null>(null);
+  const [grantTarget, setGrantTarget] = useState<ApiKey | null>(null);
   // Snapshot of "now" per mount — expiry badges don't need live ticking.
   const [now] = useState(() => Date.now());
   const items = data?.items ?? [];
@@ -157,16 +159,29 @@ export default function ApiKeysPage() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {status === "active" && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-destructive"
-                            onClick={() => setRevokeTarget(k)}
-                          >
-                            Revoke
-                          </Button>
-                        )}
+                        <div className="flex justify-end gap-1">
+                          {status !== "revoked" && (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setGrantTarget(k)}
+                              >
+                                Grants
+                              </Button>
+                              {status === "active" && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="text-destructive"
+                                  onClick={() => setRevokeTarget(k)}
+                                >
+                                  Revoke
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -192,6 +207,16 @@ export default function ApiKeysPage() {
         open={createOpen}
         onOpenChange={setCreateOpen}
         onCreated={refetch}
+      />
+      <GrantManagerDialog
+        apiKey={
+          grantTarget
+            ? (items.find((k) => k.id === grantTarget.id) ?? grantTarget)
+            : null
+        }
+        open={grantTarget !== null}
+        onOpenChange={(open) => !open && setGrantTarget(null)}
+        onChanged={refetch}
       />
       <RevokeKeyDialog
         apiKey={revokeTarget}
