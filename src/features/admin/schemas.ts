@@ -35,7 +35,10 @@ export const jobRunSchema = z.object({
   error: z.string().nullable(),
 });
 export type JobRun = z.infer<typeof jobRunSchema>;
-export const jobsSchema = z.object({ items: z.array(jobRunSchema) });
+export const jobsSchema = z.object({
+  items: z.array(jobRunSchema),
+  nextCursor: z.string().nullable(),
+});
 export type JobsResponse = z.infer<typeof jobsSchema>;
 
 export const jobScheduleSchema = z.object({
@@ -60,7 +63,10 @@ export const reportSchema = z.object({
   createdAt: z.string(),
 });
 export type Report = z.infer<typeof reportSchema>;
-export const reportsSchema = z.object({ items: z.array(reportSchema) });
+export const reportsSchema = z.object({
+  items: z.array(reportSchema),
+  nextCursor: z.string().nullable(),
+});
 export type ReportsResponse = z.infer<typeof reportsSchema>;
 
 export const metricsSchema = z.object({

@@ -8,6 +8,7 @@ import {
   jobScheduleSchema,
   jobSchedulesSchema,
   jobsSchema,
+  type JobRun,
   type JobSchedule,
 } from "@/features/admin/schemas";
 import { PageHeader } from "@/features/admin/components/page-header";
@@ -112,8 +113,31 @@ export default function JobsPage() {
     error: jobsError,
     loading: jobsLoading,
   } = useAdminQuery("jobs", () =>
-    apiGet("/v1/admin/jobs?limit=100", jobsSchema),
+    apiGet("/v1/admin/jobs?limit=50", jobsSchema),
   );
+  const [extraItems, setExtraItems] = useState<JobRun[]>([]);
+  const [cursor, setCursor] = useState<string | null>();
+  const [loadingMore, setLoadingMore] = useState(false);
+  const jobItems = [...(jobsData?.items ?? []), ...extraItems];
+  // undefined = not paged yet (use first page's cursor); null = exhausted.
+  const nextCursor = cursor === undefined ? (jobsData?.nextCursor ?? null) : cursor;
+
+  async function loadMore() {
+    if (!nextCursor) return;
+    setLoadingMore(true);
+    try {
+      const page = await apiGet(
+        `/v1/admin/jobs?limit=50&cursor=${encodeURIComponent(nextCursor)}`,
+        jobsSchema,
+      );
+      setExtraItems((prev) => [...prev, ...page.items]);
+      setCursor(page.nextCursor);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to load more");
+    } finally {
+      setLoadingMore(false);
+    }
+  }
   const {
     data: schedulesData,
     error: schedulesError,
@@ -163,7 +187,7 @@ export default function JobsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Job runs</CardTitle>
-            <CardDescription>Latest 100 runs.</CardDescription>
+            <CardDescription>Most recent runs, newest first.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -178,7 +202,7 @@ export default function JobsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {(jobsData?.items ?? []).map((j) => {
+                {jobItems.map((j) => {
                   const duration =
                     j.finishedAt && j.startedAt
                       ? `${((new Date(j.finishedAt).getTime() - new Date(j.startedAt).getTime()) / 1000).toFixed(1)}s`
@@ -202,7 +226,7 @@ export default function JobsPage() {
                     </TableRow>
                   );
                 })}
-                {(jobsData?.items ?? []).length === 0 && (
+                {jobItems.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center text-muted-foreground">
                       No job runs yet.
@@ -211,6 +235,18 @@ export default function JobsPage() {
                 )}
               </TableBody>
             </Table>
+            {nextCursor && (
+              <div className="mt-4 flex justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={loadingMore}
+                  onClick={loadMore}
+                >
+                  {loadingMore ? "Loading…" : "Load more"}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </QueryState>
