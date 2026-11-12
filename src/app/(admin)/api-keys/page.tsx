@@ -72,7 +72,7 @@ export default function ApiKeysPage() {
         description="Scoped credentials for MCP servers and integrations. Secrets are shown once at creation and stored only as hashes."
       />
       <Card>
-        <CardHeader className="flex-row items-center justify-between">
+        <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
           <div>
             <CardTitle className="text-base">Keys</CardTitle>
             <CardDescription>
@@ -108,10 +108,10 @@ export default function ApiKeysPage() {
                       5 * 86400_000;
                   return (
                     <TableRow key={k.id} className={status === "revoked" ? "opacity-60" : ""}>
-                      <TableCell>
-                        <div className="font-medium">{k.name}</div>
+                      <TableCell className="max-w-52">
+                        <div className="truncate font-medium">{k.name}</div>
                         {k.description && (
-                          <div className="max-w-56 truncate text-xs text-muted-foreground">
+                          <div className="truncate text-xs text-muted-foreground">
                             {k.description}
                           </div>
                         )}

@@ -135,7 +135,7 @@ export function CreateKeyDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         {step === "form" ? (
           <>
             <DialogHeader>
@@ -167,7 +167,7 @@ export function CreateKeyDialog({
               </div>
               <div className="space-y-1.5">
                 <Label>Grants</Label>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Select value={resource} onValueChange={(v) => setResource(v as string)}>
                     <SelectTrigger size="sm" className="w-36">
                       <SelectValue />
@@ -268,11 +268,11 @@ export function CreateKeyDialog({
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Input
                   readOnly
                   value={issued?.secret ?? ""}
-                  className="font-mono text-xs"
+                  className="min-w-48 flex-1 font-mono text-xs"
                   onFocus={(e) => e.target.select()}
                 />
                 <Button

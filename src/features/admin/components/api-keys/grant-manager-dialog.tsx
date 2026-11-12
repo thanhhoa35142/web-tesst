@@ -106,7 +106,7 @@ export function GrantManagerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Grants — {apiKey.name}</DialogTitle>
           <DialogDescription>

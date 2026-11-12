@@ -49,7 +49,7 @@ export function RevokeKeyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Revoke API key</DialogTitle>
           <DialogDescription>
